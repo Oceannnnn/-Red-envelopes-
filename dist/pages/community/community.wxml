@@ -1,0 +1,54 @@
+<view>
+  <image src="../../static/images/ch.png" class="index_h po com_imgHeader" />
+  <!-- <view class="pr">
+      <button class='po' open-type="getUserInfo" bindgetuserinfo='getUserInfo' wx:if="{{state==0}}"></button>
+      <button class='po' open-type="share" wx:else></button>
+      <image src="../../static/images/cy.png" class="index_h cy" mode="widthFix" />
+    </view> -->
+  <navigator url="/pages/index/index" open-type="switchTab" hover-class="other-navigator-hover">
+    <image src="../../static/images/cw.png" class="index_h cw" mode="widthFix" />
+  </navigator>
+
+  <view height="" class="cy com_footer ui-row" style="">
+    <view class="ui-col ui-col-align-center align-center valign-middle" style="">
+      <view class="ui-col-content align-center valign-middle">
+        <image src="../../static/images/c1.png" class="c_img" mode="widthFix" />
+        <view class="c_text">我的福卡</view>
+        <navigator class="po" url="/pages/myFokas/myFokas" wx:if="{{state==1}}"></navigator>
+        <button class="po" open-type="getUserInfo" bindgetuserinfo="getUserInfo" wx:else=""></button>
+      </view>
+    </view>
+    <view class="ui-col ui-col-align-center align-center valign-middle" style="">
+      <view class="ui-col-content align-center valign-middle">
+        <image src="../../static/images/c2.png" class="c_img" mode="widthFix" />
+        <view class="c_text">红包排行榜</view>
+        <navigator class="po" url="/pages/redRanking/redRanking" wx:if="{{state==1}}"></navigator>
+        <button class="po" open-type="getUserInfo" bindgetuserinfo="getUserInfo" wx:else=""></button>
+      </view>
+    </view>
+    <view class="ui-col ui-col-align-center align-center valign-middle" style="">
+      <view class="ui-col-content align-center valign-middle">
+        <image src="../../static/images/c3.png" class="c_img" mode="widthFix" />
+        <view class="c_text">五福交换</view>
+        <navigator class="po" url="/pages/exchange/exchange" wx:if="{{state==1}}"></navigator>
+        <button class="po" open-type="getUserInfo" bindgetuserinfo="getUserInfo" wx:else=""></button>
+      </view>
+    </view>
+    <view class="ui-col ui-col-align-center align-center valign-middle" style="">
+      <view class="ui-col-content align-center valign-middle">
+        <image src="../../static/images/c4.png" class="c_img" mode="widthFix" />
+        <view class="c_text">五福兑换</view>
+        <navigator class="po" url="/pages/redbag/redbag" wx:if="{{state==1}}"></navigator>
+        <button class="po" open-type="getUserInfo" bindgetuserinfo="getUserInfo" wx:else=""></button>
+      </view>
+    </view>
+    <view class="ui-col ui-col-align-center align-center valign-middle" style="">
+      <view class="ui-col-content align-center valign-middle">
+        <image src="../../static/images/c5.png" class="c_img" mode="widthFix" />
+        <view class="c_text">我要赠送</view>
+        <navigator class="po" url="/pages/myFokas/myFokas" wx:if="{{state==1}}"></navigator>
+        <button class="po" open-type="getUserInfo" bindgetuserinfo="getUserInfo" wx:else=""></button>
+      </view>
+    </view>
+  </view>
+</view>

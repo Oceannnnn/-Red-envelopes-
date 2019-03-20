@@ -1,0 +1,381 @@
+<template>
+  <view>
+    <!-- <view class="c_f m_header">集红包最高可领8888元红包</view> -->
+    <image src="../../static/images/my_fBg.png" class="my_img"/>
+    <view class="banner-swiper">
+      <swiper current='{{swiperCurrent}}' 
+previous-margin="{{previousmargin}}" next-margin="{{nextmargin}}" bindchange="swiperChange" >
+        <block wx:for="{{myLuckyList}}" wx:key="key" class="pr"> 
+            <swiper-item>
+              <image src="{{item.image}}" class="slide-image{{index == swiperCurrent ? ' active' : ''}}" 
+  bindchange="swiperChange" id="{{index}}" mode="widthFix" data-index="{{index}}" data-code="{{item.code_url}}" bindtap="clickScan"/>
+              <button open-type="share" class="po" wx:if="{{item.is_shared==0}}">确认转发</button>
+              <image src="../../static/images/{{item.is_shared==0?'queren':'share_b'}}.png" class="share_b" mode="widthFix"/>
+              <view class="text">{{item.money}}</view>
+            </swiper-item>
+        </block> 
+      </swiper>
+    </view> 
+    <view class="foot-swiper">
+      <scroll-view class="scroll-view_H" scroll-x style="width: 100%">
+        <view wx:for="{{luckyShow}}" wx:key="key" wx:for-index="idx" class="nav-name pr" data-id="{{item.id}}" data-index="{{idx}}" bindtap="luckyShow">
+          <image src="{{item.image}}" class="slide-image" mode="widthFix"/>
+          <view class="text c_f">{{item.name}}</view>
+          <ui-badge text="{{item.num}}" class="lucky" custom-style="{{customStyle}}" wx:if="{{item.num!=0}}"></ui-badge>
+        </view>
+      </scroll-view>
+    </view> 
+    <ui-popup show="{{ show3 }}" height="100%">
+        <view class="popup1 pr">
+          <icon type="clear" size="24" class="icon" bindtap="handleShow3"></icon>
+          <image src="../../static/images/zeng.png" class="my_img"/>
+          <view class="command">{{command}}</view>
+          <image src="../../static/images/zeng_f.png" class="zeng_f" mode="widthFix" bindtap="setClipboardData"/>
+        </view>
+    </ui-popup>
+    <ui-popup show="{{ show4 }}" height="100%">
+        <view class="popup1 pr">
+          <icon type="clear" size="24" class="icon" bindtap="handleShow4"></icon>
+          <image src="../../static/images/list.png" class="my_img"/> 
+          <view class="forcelist" style="overflow:{{overflow}}">
+            <view wx:for="{{sharePeopleShow}}" wx:key="{{itemName}}" wx:for-item="itemName" class='flex_cb share'>
+                <view>{{itemName.nick}}</view>
+                <view>{{itemName.create_time}}</view>
+            </view>
+             <view class="share on" wx:if="{{shareShow}}" bindtap="more">查看更多好友</view>
+          </view>
+        </view>
+    </ui-popup>
+  </view>
+</template>
+
+<script>
+const app = getApp();
+import system from "../../static/utils/system.js";
+export default {
+  config: {
+    navigationBarTitleText: "我的福卡"
+  },
+  data: {
+    show3: false,
+    show4: false,
+    customStyle: {
+      top: "0",
+      right: "0",
+      position: "absolute",
+      "background-color": "#FEDFC2",
+      color: "#ff1e00"
+    },
+    swiperCurrent: 0,
+    interval: 2000,
+    previousmargin: "140rpx",
+    nextmargin: "140rpx" //后边距！
+  },
+  onLoad(op) {
+    if (op.red) {
+      this.setData({
+        fromRed: 1
+      });
+    }
+    let token = app.globalData.token;
+    system.http("Scan/luckyShow", {}, "get", token).then(res => {
+      if (res.code == 200) {
+        this.setData({
+          luckyShow: res.data
+        });
+      } else if (res.code == -1) {
+        system.afreshLogin();
+      }
+    });
+    system.http("Scan/luckyMoney", {}, "get", token).then(res => {
+      if (res.code == 200) {
+        this.setData({
+          myLuckyList: res.data
+        });
+      } else if (res.code == -1) {
+        system.afreshLogin();
+      }
+    });
+  },
+  handleShow3() {
+    this.setData({
+      show3: !this.data.show3
+    });
+  },
+  handleShow4() {
+    this.setData({
+      show4: !this.data.show4
+    });
+  },
+  swiperChange(e) {
+    this.setData({
+      swiperCurrent: e.detail.current
+    });
+  },
+  setClipboardData() {
+    let value = this.data.command;
+    wx.setClipboardData({
+      data: value,
+      success(res) {
+        wx.getClipboardData({
+          success(res) {}
+        });
+      }
+    });
+  },
+  clickScan(e) {
+    let code_url = e.currentTarget.dataset.code;
+    let index = e.currentTarget.dataset.index;
+    let token = app.globalData.token;
+    system
+      .http("Auto/sharePage", { code_url: code_url }, "post", token)
+      .then(res => {
+        if (res.code == 200) {
+          let myLuckyList = this.data.myLuckyList;
+          for (var i = 0; i < myLuckyList.length; i++) {
+            myLuckyList[index].is_shared = res.data.is_shared;
+            if (myLuckyList[index].is_shared == 1) {
+              this.setData({
+                overflow: "hidden",
+                onBottom: true,
+                page: 1,
+                sharePeopleShow: []
+              });
+              this.handleShow4();
+              this.sharePeopleShow(1, code_url);
+              break;
+            }
+          }
+          this.setData({
+            myLuckyList: myLuckyList,
+            code_url: code_url
+          });
+        } else if (res.code == -1) {
+          system.afreshLogin();
+        }
+      });
+  },
+  more() {
+    this.setData({
+      overflow: "scroll",
+      shareShow: false
+    });
+    let page = this.data.page + 1;
+    this.setData({
+      page: page
+    });
+    this.sharePeopleShow(page, this.data.code_url);
+  },
+  sharePeopleShow(page, code_url) {
+    let token = app.globalData.token;
+    let sharePeopleShow = this.data.sharePeopleShow;
+    system
+      .http(
+        "Auto/sharePeopleShow",
+        { code_url: code_url, pagesize: page, current: page },
+        "post",
+        token
+      )
+      .then(res => {
+        if (res.code == 200) {
+          if (res.data != "") {
+            for (let item of res.data) {
+              sharePeopleShow.push(item);
+            }
+            this.setData({
+              sharePeopleShow: sharePeopleShow
+            });
+            if (sharePeopleShow.length == 6) {
+              this.setData({
+                shareShow: true
+              });
+            }
+          } else if (res.code == 0) {
+            if (page > 1) {
+              this.data.onBottom = false;
+            }
+          } else if (res.code == -1) {
+            system.afreshLogin();
+          }
+        }
+      });
+  },
+  onReachBottom() {
+    let page = this.data.page + 1;
+    this.setData({
+      page: page
+    });
+    if (this.data.onBottom) {
+      this.sharePeopleShow(page, this.data.code_url);
+    }
+  },
+  luckyShow(e) {
+    let luckyShow = this.data.luckyShow;
+    let id = e.currentTarget.dataset.id;
+    let index = e.currentTarget.dataset.index;
+    let num = luckyShow[index].num;
+    if (num == 0) {
+      wx.showToast({
+        title: "你还未集到！",
+        icon: "none"
+      });
+    } else {
+      this.handleShow3();
+      let token = app.globalData.token;
+      system
+        .http("Scan/createGiveCommand", { id: id }, "post", token)
+        .then(res => {
+          if (res.code == 200) {
+            this.setData({
+              command: res.data.encypt
+            });
+          } else if (res.code == -1) {
+            system.afreshLogin();
+          }
+        });
+    }
+  },
+  onUnload() {
+    if (this.data.fromRed) {
+      wx.switchTab({
+        url: "../community/community"
+      });
+    }
+  },
+  onShareAppMessage() {
+    let encrypt = app.globalData.encrypt;
+    let shareMessage = app.globalData.shareMessage;
+    let code_url = this.data.code_url;
+    return {
+      title: shareMessage,
+      path: "/pages/index/index?encrypt=" + encrypt + "&code_url=" + code_url
+    };
+  }
+};
+</script>
+
+<style lang="less">
+.m_header {
+  .f_s(36rpx);
+  letter-spacing: 3px;
+  font-weight: 700;
+  .mix-flex-x-center();
+  .padding(40rpx);
+}
+.my_img {
+  .width(100%);
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.banner-swiper {
+  height: 720rpx;
+  overflow: hidden;
+  margin-top: 210rpx;
+  swiper {
+    height: 720rpx;
+    position: relative;
+  }
+  .slide-image {
+    .padding(40rpx);
+    width: 400rpx;
+    position: absolute;
+    left: 50%;
+    .margin(0,0,0,-200rpx);
+  }
+  .active {
+    transform: scale(1.14);
+    transition: all 0.2s ease-in 0s;
+  }
+  .text {
+    .f_s(80rpx);
+    color: #ff1e00;
+    position: absolute;
+    right: 37%;
+    top: 55%;
+  }
+  .share_b {
+    width: 60%;
+    position: absolute;
+    z-index: 10;
+    bottom: 70rpx;
+    left: 50%;
+    margin-left: -30%;
+  }
+}
+.popup1 {
+  height: 100vh;
+  .icon {
+    position: absolute;
+    top: 20rpx;
+    right: 20rpx;
+    z-index: 100;
+  }
+  .command {
+    position: absolute;
+    box-shadow: 1px 1px 4px red;
+    border-radius: 50rpx;
+    width: 60%;
+    left: 50%;
+    top: 500rpx;
+    margin-left: -30%;
+    font-size: 28rpx;
+    text-align: center;
+    color: #f7ad6f;
+    background: #fff;
+    padding: 20rpx 0;
+  }
+  .zeng_f {
+    width: 100%;
+    position: absolute;
+    top: 610rpx;
+    left: 0;
+  }
+  .forcelist {
+    height: 450rpx;
+    width: 80%;
+    z-index: 1000;
+    position: absolute;
+    top: 150rpx;
+    left: 50%;
+    margin-left: -40%;
+    .f_s(28rpx);
+    .flex_cb {
+      .mix-flex-space();
+    }
+    .share {
+      padding: 10rpx;
+      background: rgba(80, 2, 0, 0.1);
+      margin-bottom: 10rpx;
+      color: #fff;
+    }
+    .share.on {
+      text-align: center;
+    }
+  }
+}
+.foot-swiper {
+  .margin(20rpx);
+  .scroll-view_H {
+    white-space: nowrap;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .nav-name {
+    display: inline-block;
+    border-bottom: 2px solid transparent;
+    .width(20%);
+    padding: 10rpx;
+    text-align: center;
+    .slide-image {
+      .width(96%);
+      .margin(0,0,0,2%);
+    }
+    .text {
+      .f_s(24rpx);
+      .margin(10rpx);
+    }
+  }
+}
+</style>

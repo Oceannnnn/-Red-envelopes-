@@ -1,0 +1,15 @@
+<template>
+  <view></view>
+</template>
+
+<script>
+export default {
+  config: {
+    navigationBarTitleText: '五福兑换'
+  },
+  data: {}
+}
+</script>
+
+<style lang="less">
+</style>

@@ -1,0 +1,46 @@
+<view>
+  <!-- <view class="c_f m_header">集红包最高可领8888元红包</view> -->
+  <image src="../../static/images/my_fBg.png" class="my_img" />
+  <view class="banner-swiper">
+    <swiper current="{{swiperCurrent}}" previous-margin="{{previousmargin}}" next-margin="{{nextmargin}}" bindchange="swiperChange">
+      <block wx:for="{{myLuckyList}}" wx:key="key" class="pr">
+        <swiper-item>
+          <image src="{{item.image}}" class="slide-image{{index == swiperCurrent ? ' active' : ''}}" bindchange="swiperChange" id="{{index}}" mode="widthFix" data-index="{{index}}" data-code="{{item.code_url}}" bindtap="clickScan" />
+          <button open-type="share" class="po" wx:if="{{item.is_shared==0}}">确认转发</button>
+          <image src="../../static/images/{{item.is_shared==0?'queren':'share_b'}}.png" class="share_b" mode="widthFix" />
+          <view class="text">{{item.money}}</view>
+        </swiper-item>
+      </block>
+    </swiper>
+  </view>
+  <view class="foot-swiper">
+    <scroll-view class="scroll-view_H" scroll-x style="width: 100%">
+      <view wx:for="{{luckyShow}}" wx:key="key" wx:for-index="idx" class="nav-name pr" data-id="{{item.id}}" data-index="{{idx}}" bindtap="luckyShow">
+        <image src="{{item.image}}" class="slide-image" mode="widthFix" />
+        <view class="text c_f">{{item.name}}</view>
+        <ui-badge text="{{item.num}}" class="lucky" custom-style="{{customStyle}}" wx:if="{{item.num!=0}}" _pid="{{_pid}}"></ui-badge>
+      </view>
+    </scroll-view>
+  </view>
+  <ui-popup show="{{ show3 }}" height="100%" _pid="{{_pid}}">
+    <view class="popup1 pr">
+      <icon type="clear" size="24" class="icon" bindtap="handleShow3"></icon>
+      <image src="../../static/images/zeng.png" class="my_img" />
+      <view class="command">{{command}}</view>
+      <image src="../../static/images/zeng_f.png" class="zeng_f" mode="widthFix" bindtap="setClipboardData" />
+    </view>
+  </ui-popup>
+  <ui-popup show="{{ show4 }}" height="100%" _pid="{{_pid}}">
+    <view class="popup1 pr">
+      <icon type="clear" size="24" class="icon" bindtap="handleShow4"></icon>
+      <image src="../../static/images/list.png" class="my_img" />
+      <view class="forcelist" style="overflow:{{overflow}}">
+        <view wx:for="{{sharePeopleShow}}" wx:key="{{itemName}}" wx:for-item="itemName" class="flex_cb share">
+          <view>{{itemName.nick}}</view>
+          <view>{{itemName.create_time}}</view>
+        </view>
+        <view class="share on" wx:if="{{shareShow}}" bindtap="more">查看更多好友</view>
+      </view>
+    </view>
+  </ui-popup>
+</view>

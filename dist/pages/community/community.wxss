@@ -1,0 +1,80 @@
+/* 1像素解决方案 */
+/*
+ * 清除1px
+ */
+/*
+ * 清除浮动
+ */
+/*
+ * mobile
+ */
+/*
+ * 1px
+ */
+/*
+ * text
+ */
+/* 垂直居中 */
+/* 水平居中 */
+/* 水平垂直居中 */
+/* 超出部分出省略号 */
+/* 多行文本超出部分省略号 */
+page {
+  background: #f8f8f8;
+}
+.p_20 {
+  padding: 20rpx;
+}
+.pr {
+  position: relative;
+}
+.po {
+  position: absolute;
+  width: 100%;
+  height: 86%;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  background: none;
+  border: none;
+  z-index: 11;
+}
+.c_f {
+  color: #fff;
+}
+.c_999 {
+  color: #999;
+}
+.index_h {
+  width: 100%;
+}
+.com_imgHeader {
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  opacity: 1;
+}
+.cy {
+  margin: 40rpx 0 0 0;
+}
+.c_text {
+  font-size: 28rpx;
+  margin: 5rpx 0 0 0;
+}
+.c_img {
+  width: 90%;
+}
+.cw {
+  margin: 20rpx 0 40rpx 0;
+  z-index: 100;
+  position: fixed;
+  bottom: 140rpx;
+}
+.com_footer {
+  position: fixed;
+  z-index: 100;
+  bottom: 20rpx;
+  width: 100%;
+  color: #fff;
+}

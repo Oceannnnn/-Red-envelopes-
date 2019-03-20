@@ -1,0 +1,17 @@
+<view>
+  <view wx:if="{{list!=''}}">
+    <view wx:for="{{list}}" wx:key="{{itemName}}" wx:for-item="itemName" class="list">
+      <view class="flex_cb">
+        <view>{{itemName.status}}</view>
+        <view>￥{{itemName.money}}</view>
+      </view>
+      <view class="tixian_no c_999">
+        单号：{{itemName.tixian_no}}
+      </view>
+      <view class="c_999 create_time">
+        {{itemName.create_time}}
+      </view>
+    </view>
+  </view>
+
+</view>

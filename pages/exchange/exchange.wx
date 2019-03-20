@@ -1,0 +1,309 @@
+<template>
+  <view>
+    <view class='search p_20'>
+      <view class='searchBox p_20'>
+        <icon type="search" size="14" class="icon"></icon>
+        <input type="text" placeholder="请输入查询帖子的关键字" bindconfirm="bindconfirm">
+      </view>
+      <image src="../../static/images/ex_f.png" class="index_h" mode="widthFix" bindtap="publishLucky" />
+    </view>
+    <view class='ex_body'>
+      <view class='ex_items' wx:key="" wx:for="{{ex_items}}" wx:for-index="idx">
+        <view class="ex_items_h p_20"  data-id="{{item.id}}"  data-index="{{idx}}" data-self="{{item.is_self}}" bindtap="changeLucky">
+          <image src="{{item.avatar}}" class="ex_items_i"/>
+          <view>
+            <view class="ex_items_n">{{item.nick}}</view>
+            <view class="c_999">{{item.create_time}}</view>
+          </view>
+        </view>
+        <view class="p_20">
+          <view class="ex_items_n">
+            {{item.content}}
+          </view>
+          <ui-row height="" space-bottom="20" class="p_20" wx:if="{{item.in_text!=''}}">
+            <ui-col align="center" vertical-align="middle">
+              <image src="{{item.out_image}}" class="c_img" mode="widthFix" />
+              <view class="c_text">{{item.out_text}}</view>
+            </ui-col>
+            <ui-col align="center" vertical-align="middle">
+              <image src="../../static/images/ex_h.png" class="c_img on" mode="widthFix" />
+            </ui-col>
+            <ui-col align="center" vertical-align="middle">
+              <image src="{{item.in_image}}" class="c_img" mode="widthFix" />
+              <view class="c_text">{{item.in_text}}</view>
+            </ui-col>
+          </ui-row>
+        </view>
+        <view class='mt_20 f_28 plun' wx:if="{{item.commentList!=''}}">
+          <view class='sheng flex_i mb_10' wx:for="{{item.commentList}}" wx:key="" wx:if="{{plun_idx<5}}" wx:for-index="plun_idx" wx:for-item="plunName">
+            <text class='c_999'>{{plunName.comment_user}}：</text> {{plunName.content}}
+          </view>
+          <!-- <view class='c_999' wx:if="{{item.commentList.length>5}}">等{{item.commentList.length}}人评论</view> -->
+        </view>
+        <input class='input mt_20' placeholder='回复' bindconfirm='add_plun' data-index='{{idx}}' data-id='{{item.id}}' value='{{value}}' data-name='{{nickName}}'/>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+const app = getApp();
+import system from "../../static/utils/system.js";
+export default {
+  config: {
+    navigationBarTitleText: "五福交换"
+  },
+  data: {},
+  onLoad() {
+    this.init();
+  },
+  onShow() {
+    if (app.globalData.state == 1) {
+      this.setData({
+        nickName: app.globalData.userInfo.nickName
+      });
+    }
+    this.init();
+  },
+  init() {
+    this.setData({
+      page: 1,
+      onBottom: true,
+      search: "",
+      ex_items: []
+    });
+    this.ex_items(1, "");
+  },
+  publishLucky() {
+    wx.navigateTo({
+      url: "../posting/posting"
+    });
+  },
+  ex_items(page, search) {
+    let json = {
+      pagesize: 10,
+      current: page,
+      search: search
+    };
+    let list = this.data.ex_items;
+    let token = app.globalData.token;
+    system.http("Change/publishList", json, "post", token).then(res => {
+      if (res.code == 200) {
+        if (res.data != "") {
+          for (let item of res.data) {
+            list.push(item);
+          }
+          this.setData({
+            ex_items: list
+          });
+        } else if (res.code == 0) {
+          if (page > 1) {
+            this.data.onBottom = false;
+          }
+        } else if (res.code == -1) {
+          system.afreshLogin();
+        }
+      }
+    });
+  },
+  onReachBottom() {
+    let page = this.data.page + 1;
+    this.setData({
+      page: page
+    });
+    if (this.data.onBottom) {
+      this.ex_items(page, this.data.search);
+    }
+  },
+  onPullDownRefresh: function() {
+    wx.showNavigationBarLoading(); //在标题栏中显示加载
+    this.init();
+    //模拟加载
+    setTimeout(function() {
+      // complete
+      wx.hideNavigationBarLoading(); //完成停止加载
+      wx.stopPullDownRefresh(); //停止下拉刷新
+    }, 1500);
+  },
+  bindconfirm(e) {
+    let value = e.detail.value;
+    this.setData({
+      search: value,
+      page: 1,
+      onBottom: true,
+      ex_items: []
+    });
+    this.ex_items(1, value);
+  },
+  add_plun(e) {
+    if (app.globalData.state == 1) {
+      let comment = e.detail.value;
+      let token = app.globalData.token;
+      let id = e.currentTarget.dataset.id;
+      let index = e.currentTarget.dataset.index;
+      let nick_name = e.currentTarget.dataset.name;
+      let ex_items = this.data.ex_items;
+      let json = {
+        comment_user: nick_name,
+        content: comment
+      };
+      system
+        .http(
+          "Comment/comment",
+          { change_id: id, content: comment },
+          "post",
+          token
+        )
+        .then(res => {
+          if (res.code == 200) {
+            ex_items[index].commentList.unshift(json);
+            this.setData({
+              ex_items: ex_items,
+              value: ""
+            });
+          }
+        });
+    } else if (res.code == -1) {
+      system.afreshLogin();
+    }
+  },
+  changeLucky(e) {
+    let token = app.globalData.token;
+    let list = this.data.ex_items;
+    let id = e.currentTarget.dataset.id;
+    let index = e.currentTarget.dataset.index;
+    let self = e.currentTarget.dataset.self;
+    let that = this;
+    wx.showModal({
+      title: "提示",
+      content: "确定交换吗？",
+      success(res) {
+        if (res.confirm) {
+          if (self == 1) {
+            wx.showToast({
+              title: "不能交换自己的",
+              icon: "none"
+            });
+            return;
+          }
+          system
+            .http("Change/changeLucky", { change_id: id }, "post", token)
+            .then(res => {
+              if (res.code == 200) {
+                wx.showToast({
+                  title: "交换成功",
+                  icon: "success"
+                });
+                list.splice(index, 1);
+                that.setData({
+                  ex_items: list
+                });
+              } else if (res.code == -1) {
+                system.afreshLogin();
+              } else if (res.code == 0) {
+                wx.showToast({
+                  title: "没有可以交换的福卡",
+                  icon: "none"
+                });
+              }
+            });
+        }
+      }
+    });
+  }
+};
+</script>
+
+<style lang="less">
+.bg_f {
+  background: #fff;
+}
+.searchBox {
+  width: 90%;
+  height: 60rpx;
+  line-height: 60rpx;
+  .border-radius(30rpx);
+  border: 1px solid #000;
+  color: #666;
+  z-index: 10;
+  .f_s(30rpx);
+  .mix-flex-y-center();
+}
+.icon {
+  display: block;
+  .margin(30rpx,20rpx);
+}
+.index_h {
+  width: 50rpx;
+}
+.search {
+  z-index: 100;
+  position: fixed;
+  top: 0;
+  left: 0%;
+  .width();
+  .bg_f();
+  .mix-flex-space();
+}
+.ex_body {
+  .margin(100rpx);
+}
+.ex_items {
+  padding-bottom: 20rpx;
+  .bg_f();
+  .margin(0,0,20rpx);
+}
+.ex_items_i {
+  width: 120rpx;
+  height: 120rpx;
+  .border-radius(50%);
+  .margin(0,20rpx);
+}
+.ex_items_h {
+  display: flex;
+  .f_s(32rpx);
+  .mix-1px(0, 0, 1, 0, #E5E5E5);
+}
+.ex_items_n {
+  .f_s(34rpx);
+  .margin(0,0,10rpx);
+}
+.c_text {
+  .f_s(32rpx);
+  .margin(10rpx);
+}
+.c_img {
+  .width(140rpx);
+}
+.c_img.on {
+  .margin(40rpx);
+}
+.input {
+  .f_s(30rpx);
+  border: 1px solid #eeeeee;
+  padding: 10rpx;
+  width: 90%;
+  margin: 10rpx auto;
+}
+.plun {
+  .mb_10 {
+    margin-bottom: 10rpx;
+  }
+  padding: 20rpx;
+  .flex_i {
+    .mix-flex-y-center();
+  }
+  .c_999 {
+    color: #999;
+  }
+}
+.f_28 {
+  font-size: 28rpx;
+}
+.mt_20 {
+  margin-top: 20rpx;
+}
+.sheng {
+  .mix-text-overflow();
+}
+</style>

@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "ui-popup": "../../packages/touchui-wx-components/ui-popup/dist/index"
+  }
+}

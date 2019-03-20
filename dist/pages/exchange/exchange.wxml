@@ -1,0 +1,51 @@
+<view>
+  <view class="search p_20">
+    <view class="searchBox p_20">
+      <icon type="search" size="14" class="icon"></icon>
+      <input type="text" placeholder="请输入查询帖子的关键字" bindconfirm="bindconfirm"></input>
+    </view>
+    <image src="../../static/images/ex_f.png" class="index_h" mode="widthFix" bindtap="publishLucky" />
+  </view>
+  <view class="ex_body">
+    <view class="ex_items" wx:key="" wx:for="{{ex_items}}" wx:for-index="idx">
+      <view class="ex_items_h p_20" data-id="{{item.id}}" data-index="{{idx}}" data-self="{{item.is_self}}" bindtap="changeLucky">
+        <image src="{{item.avatar}}" class="ex_items_i" />
+        <view>
+          <view class="ex_items_n">{{item.nick}}</view>
+          <view class="c_999">{{item.create_time}}</view>
+        </view>
+      </view>
+      <view class="p_20">
+        <view class="ex_items_n">
+          {{item.content}}
+        </view>
+        <view height="" class="p_20 ui-row" wx:if="{{item.in_text!=''}}" style="margin-bottom: 20px;">
+          <view class="ui-col ui-col-align-center align-center valign-middle" style="">
+            <view class="ui-col-content align-center valign-middle">
+              <image src="{{item.out_image}}" class="c_img" mode="widthFix" />
+              <view class="c_text">{{item.out_text}}</view>
+            </view>
+          </view>
+          <view class="ui-col ui-col-align-center align-center valign-middle" style="">
+            <view class="ui-col-content align-center valign-middle">
+              <image src="../../static/images/ex_h.png" class="c_img on" mode="widthFix" />
+            </view>
+          </view>
+          <view class="ui-col ui-col-align-center align-center valign-middle" style="">
+            <view class="ui-col-content align-center valign-middle">
+              <image src="{{item.in_image}}" class="c_img" mode="widthFix" />
+              <view class="c_text">{{item.in_text}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="mt_20 f_28 plun" wx:if="{{item.commentList!=''}}">
+        <view class="sheng flex_i mb_10" wx:for="{{item.commentList}}" wx:key="" wx:if="{{plun_idx<5}}" wx:for-index="plun_idx" wx:for-item="plunName">
+          <text class="c_999">{{plunName.comment_user}}：</text> {{plunName.content}}
+        </view>
+        <!-- <view class='c_999' wx:if="{{item.commentList.length>5}}">等{{item.commentList.length}}人评论</view> -->
+      </view>
+      <input class="input mt_20" placeholder="回复" bindconfirm="add_plun" data-index="{{idx}}" data-id="{{item.id}}" value="{{value}}" data-name="{{nickName}}"></input>
+    </view>
+  </view>
+</view>

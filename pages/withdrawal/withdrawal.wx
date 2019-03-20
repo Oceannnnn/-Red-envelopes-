@@ -1,0 +1,94 @@
+<template>
+  <view>
+    <view wx:if="{{list!=''}}">
+      <view wx:for="{{list}}" wx:key="{{itemName}}" wx:for-item="itemName" class='list'>
+        <view class='flex_cb'>
+          <view>{{itemName.status}}</view>
+          <view>￥{{itemName.money}}</view>
+        </view>
+        <view class='tixian_no c_999'>
+          单号：{{itemName.tixian_no}}
+        </view>
+        <view class='c_999 create_time'>
+          {{itemName.create_time}}
+        </view>
+      </view>
+    </view>
+
+  </view>
+</template>
+
+<script>
+const app = getApp();
+import system from "../../static/utils/system";
+export default {
+  config: {
+    navigationBarTitleText: "提现明细"
+  },
+  data: {
+    list: [],
+    onBottom:true,
+    page:1
+  },
+  onLoad(op) {
+    this.list(1);
+  },
+  list(page) {
+    let json = {
+      pagesize: 10,
+      current: page
+    };
+    let list = this.data.list;
+    let token = app.globalData.token;
+    system.http("My/tixianList", json, "post", token).then(res => {
+      if (res.code == 200) {
+        if (res.data != "") {
+          for (let item of res.data) {
+            list.push(item);
+          }
+          this.setData({
+            list: list
+          });
+        } else if (res.code == 0) {
+          if (page > 1) {
+            this.data.onBottom = false;
+          }
+        } else if (res.code == -1) {
+          system.afreshLogin();
+        }
+      }
+    });
+  },
+  onReachBottom() {
+    let page = this.data.page + 1;
+    this.setData({
+      page: page
+    });
+    if (this.data.onBottom) {
+      this.list(page);
+    }
+  }
+};
+</script>
+
+<style lang="less">
+page {
+  background: #fff;
+}
+.list {
+  padding: 20rpx;
+  border-bottom: 1px solid #eeeeee;
+  .flex_cb {
+    .mix-flex-space();
+    .f_s(34rpx);
+    .margin(0,0,10rpx,0);
+  }
+  .tixian_no {
+    .f_s(32rpx);
+    .margin(0,0,10rpx,0);
+  }
+  .create_time {
+    .f_s(28rpx);
+  }
+}
+</style>

@@ -1,0 +1,159 @@
+/* 1像素解决方案 */
+/*
+ * 清除1px
+ */
+/*
+ * 清除浮动
+ */
+/*
+ * mobile
+ */
+/*
+ * 1px
+ */
+/*
+ * text
+ */
+/* 垂直居中 */
+/* 水平居中 */
+/* 水平垂直居中 */
+/* 超出部分出省略号 */
+/* 多行文本超出部分省略号 */
+page {
+  background: #f8f8f8;
+}
+.p_20 {
+  padding: 20rpx;
+}
+.pr {
+  position: relative;
+}
+.po {
+  position: absolute;
+  width: 100%;
+  height: 86%;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  background: none;
+  border: none;
+  z-index: 11;
+}
+.c_f {
+  color: #fff;
+}
+.c_999 {
+  color: #999;
+}
+.bg_f {
+  background: #fff;
+}
+.searchBox {
+  width: 90%;
+  height: 60rpx;
+  line-height: 60rpx;
+  border-radius: 30rpx;
+  border: 1px solid #000;
+  color: #666;
+  z-index: 10;
+  font-size: 30rpx;
+  display: flex;
+  align-items: center;
+}
+.icon {
+  display: block;
+  margin: 30rpx 20rpx 0 0;
+}
+.index_h {
+  width: 50rpx;
+}
+.search {
+  z-index: 100;
+  position: fixed;
+  top: 0;
+  left: 0%;
+  width: 100%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ex_body {
+  margin: 100rpx 0 0 0;
+}
+.ex_items {
+  padding-bottom: 20rpx;
+  background: #fff;
+  margin: 0 0 20rpx 0;
+}
+.ex_items_i {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  margin: 0 20rpx 0 0;
+}
+.ex_items_h {
+  display: flex;
+  font-size: 32rpx;
+  position: relative;
+}
+.ex_items_h:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 300%;
+  height: 300%;
+  border: 0 #E5E5E5 solid;
+  box-sizing: border-box;
+  transform-origin: 0 0;
+  transform: scale(0.33333333);
+  pointer-events: none;
+  z-index: 0;
+  border-bottom-width: 1px;
+}
+.ex_items_n {
+  font-size: 34rpx;
+  margin: 0 0 10rpx 0;
+}
+.c_text {
+  font-size: 32rpx;
+  margin: 10rpx 0 0 0;
+}
+.c_img {
+  width: 140rpx;
+}
+.c_img.on {
+  margin: 40rpx 0 0 0;
+}
+.input {
+  font-size: 30rpx;
+  border: 1px solid #eeeeee;
+  padding: 10rpx;
+  width: 90%;
+  margin: 10rpx auto;
+}
+.plun {
+  padding: 20rpx;
+}
+.plun .mb_10 {
+  margin-bottom: 10rpx;
+}
+.plun .flex_i {
+  display: flex;
+  align-items: center;
+}
+.plun .c_999 {
+  color: #999;
+}
+.f_28 {
+  font-size: 28rpx;
+}
+.mt_20 {
+  margin-top: 20rpx;
+}
+.sheng {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

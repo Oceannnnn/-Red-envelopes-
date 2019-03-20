@@ -1,0 +1,45 @@
+<view>
+  <textarea placeholder="分享内容..." class="textarea p_20" bindinput="bindinput"></textarea>
+  <view class="ui-row-list" style="">
+    <view class="my_body ui-row" bindtap="change" data-type="1" style="">
+      <view class="ui-col ui-col-4 ui-col-align-center align-center valign-middle" style="flex: 0 0 33.33333333333333%;">
+        <view class="ui-col-content align-center valign-middle">
+          <image src="{{image1}}" class="c_img" mode="widthFix" />
+        </view>
+      </view>
+      <view class="text ui-col ui-col-8" style="flex: 0 0 66.66666666666666%;">
+        <view class="ui-col-content">
+          {{text1}}
+        </view>
+      </view>
+    </view>
+    <view class="my_body ui-row" bindtap="change" data-type="2" wx:if="{{ischoose==1}}" style="">
+      <view class="ui-col ui-col-4 ui-col-align-center align-center valign-middle" style="flex: 0 0 33.33333333333333%;">
+        <view class="ui-col-content align-center valign-middle">
+          <image src="{{image2}}" class="c_img" mode="widthFix" />
+        </view>
+      </view>
+      <view class="text ui-col ui-col-8" style="flex: 0 0 66.66666666666666%;">
+        <view class="ui-col-content">
+          {{text2}}
+        </view>
+      </view>
+    </view>
+  </view>
+  <ui-popup show="{{ show5 }}" height="270" background="transparent" _pid="{{_pid}}">
+    <view class="popup5 pr">
+      <view class="showText">{{showText}}</view>
+      <span type="x" size="18" color="#999" class="close ui-icon icon-x" bindtap="handleShow5" style="color: #999;font-size: 18px;"></span>
+      <view class="ui-row" style="margin-bottom: 20px;">
+        <view wx:for="{{list}}" wx:key="" class="list ui-col ui-col-align-center align-center valign-middle" data-id="{{item.id}}" data-image="{{item.image}}" data-name="{{item.name}}" bindtap="{{item.num!=0?'changeImage':''}}" style="">
+          <view class="ui-col-content align-center valign-middle">
+            <image src="{{item.image}}" mode="widthFix" />
+            <view class="text">{{item.name}}</view>
+            <ui-badge text="{{item.num}}" class="lucky" custom-style="{{customStyle}}" wx:if="{{item.num!=0&&type==1}}" _pid="{{_pid}}"></ui-badge>
+          </view>
+        </view>
+      </view>
+    </view>
+  </ui-popup>
+  <button class="button-style-demo1" disabled="{{disabled}}" bindtap="publishLucky">立即发表</button>
+</view>

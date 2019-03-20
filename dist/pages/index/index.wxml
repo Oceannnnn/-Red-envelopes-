@@ -1,0 +1,22 @@
+<import src="../../static/wxParse/wxParse.wxml" />
+<view>
+  {{data1}}
+  <view class="rules c_f" bindtap="rules">活动规则</view>
+  <image src="../../static/images/index_h.png" class="index_h" />
+  <input type="text" value="{{str}}" placeholder="输入口令：例如2GDHH" class="input" placeholder-style="color:#f7ad6f;" bindinput="bindinput"></input>
+  <view class="pr w100">
+    <image src="../../static/images/index_z.png" class="index_l" mode="widthFix" bindtap="{{state==1?'open':''}}" />
+    <button open-type="getUserInfo" bindgetuserinfo="getUserInfo" class="po index_po" wx:if="{{state==0}}"> </button>
+  </view>
+  <ui-popup show="{{ isShow }}" height="100%" _pid="{{_pid}}">
+    <view class="popup">
+      <view class="flex">
+        <view class="huodong">活动规则</view>
+        <icon type="cancel" size="24" bindtap="rules"></icon>
+      </view>
+      <view>
+        <template is="wxParse" data="{{wxParseData:details.nodes}}" />
+      </view>
+    </view>
+  </ui-popup>
+</view>

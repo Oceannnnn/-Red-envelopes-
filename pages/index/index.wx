@@ -1,0 +1,249 @@
+<template>
+  <import src="../../static/wxParse/wxParse.wxml">
+  <view>
+    {{data1}}
+    <view class="rules c_f" bindtap='rules'>活动规则</view>
+    <image src="../../static/images/index_h.png" class="index_h"/>
+    <input type="text" value="{{str}}" placeholder="输入口令：例如2GDHH" class="input" placeholder-style="color:#f7ad6f;" bindinput="bindinput">
+    <view class="pr w100">
+      <image src="../../static/images/index_z.png" class="index_l" mode="widthFix" bindtap="{{state==1?'open':''}}" />
+      <button open-type="getUserInfo" bindgetuserinfo="getUserInfo" class='po index_po' wx:if="{{state==0}}"> </button>
+    </view>
+    <ui-popup show="{{ isShow }}" height="100%">
+      <view class="popup">
+        <view class="flex">
+          <view class="huodong">活动规则</view>
+          <icon type="cancel" size="24" bindtap='rules'></icon>
+        </view>
+        <view>
+          <template is="wxParse" data="{{wxParseData:details.nodes}}" />
+        </view>
+      </view>
+    </ui-popup>
+  </view>
+</template>
+
+<script>
+const app = getApp();
+import system from "../../static/utils/system.js";
+import WxParse from "../../static/wxParse/wxParse.js";
+export default {
+  data: {
+    str: "",
+    isShow: false,
+    state: 0
+  },
+  onShow() {
+    if (app.globalData.state == 1) {
+      this.setData({
+        state: 1
+      });
+    } else {
+      this.setData({
+        state: 0,
+      });
+    }
+  },
+  onLoad(op) {
+    this.init();
+    this.share(op);
+  },
+  init() {
+    system.http("Setting/settingInfo", {}, "get").then(res => {
+      if (res.code == 200) {
+        app.globalData.shareMessage = res.data.share;
+        app.globalData.phone = res.data.phone;
+        WxParse.wxParse("details", "html", res.data.rule, this, 0);
+      }
+    });
+  },
+  share(op) {
+    if (op.code_url) {
+      app.globalData.shareEncrypt = op.encrypt;
+      app.globalData.code_url = op.code_url;
+    }
+  },
+  bindinput(e) {
+    this.setData({
+      str: e.detail.value
+    });
+  },
+  rules() {
+    this.setData({
+      isShow: !this.data.isShow
+    });
+  },
+  open() {
+    let token = app.globalData.token;
+    let str = this.data.str;
+    if (str == "") {
+      wx.showToast({
+        title: "请输入口令",
+        icon: "none"
+      });
+      return;
+    }
+    system.http("Scan/copyString", { str: str }, "post", token).then(res => {
+      if (res.code == 200) {
+        wx.navigateTo({
+          url: "../myFokas/myFokas"
+        });
+        this.setData({
+          str: ""
+        });
+      } else if (res.code == -1) {
+        system.afreshLogin();
+      } else {
+        wx.showToast({
+          title: res.msg,
+          icon: "none"
+        });
+      }
+    });
+  },
+  saoma(identification) {
+    let token = app.globalData.token;
+    system
+      .http("Scan/scanOper", { code_id: identification }, "post", token)
+      .then(res => {
+        if (res.code == 200) {
+          wx.navigateTo({
+            url: "../myFokas/myFokas"
+          });
+          app.globalData.scene = "";
+        } else if (res.code == -1) {
+          system.afreshLogin();
+        } else if (res.code == 0) {
+          wx.showToast({
+            title: res.msg,
+            icon: "none"
+          });
+        }
+      });
+  },
+  getUserInfo(e) {
+    let that = this;
+    wx.login({
+      success: function(res) {
+        let code = res.code;
+        wx.getSetting({
+          success(loginres) {
+            if (loginres.authSetting["scope.userInfo"]) {
+              wx.getUserInfo({
+                success: msg => {
+                  let encryptedData = msg.encryptedData;
+                  let iv = msg.iv;
+                  let token = "";
+                  let json = {
+                    code: code,
+                    encryptedData: encryptedData,
+                    iv: iv
+                  };
+                  system.http("Login/login", json, "post", token).then(data => {
+                    if (data.code == 200) {
+                      app.globalData.userInfo = e.detail.userInfo;
+                      app.globalData.encrypt = data.data.encrypt;
+                      app.globalData.state = 1;
+                      app.globalData.token = data.data.token;
+                      wx.setStorage({
+                        key: "httpClient",
+                        data: {
+                          state: 1,
+                          userInfo: e.detail.userInfo,
+                          token: data.data.token,
+                          encrypt: data.data.encrypt
+                        }
+                      });
+                      let shareEncrypt = app.globalData.shareEncrypt;
+                      let code_url = app.globalData.code_url;
+                      system
+                        .http(
+                          "Auto/click",
+                          { encrypt: shareEncrypt, code_url: code_url },
+                          "post",
+                          data.data.token
+                        )
+                        .then(res => {});
+                    }
+                  });
+                }
+              });
+            } else {
+              wx.showToast({
+                title: "授权才能开启哦！",
+                icon: "none",
+                duration: 2000
+              });
+            }
+          }
+        });
+      }
+    });
+  }
+};
+</script>
+
+<style lang="less">
+@import "../../static/wxParse/wxParse.wxss";
+.margin_auto(@top:20rpx) {
+  margin: @top auto 0;
+}
+.w100 {
+  .width(100%);
+  height: 100vh;
+}
+.rules {
+  position: absolute;
+  padding: 10rpx 30rpx;
+  top: 40rpx;
+  right: 40rpx;
+  .f_s(28rpx);
+  background: #7d7d7d;
+  .border-radius(50rpx);
+}
+.index_h {
+  .width(100%);
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.input {
+  position: absolute;
+  box-shadow: 1px 1px 4px red;
+  border-radius: 50rpx;
+  width: 60%;
+  left: 50%;
+  top: 280rpx;
+  margin-left: -30%;
+  font-size: 28rpx;
+  text-align: center;
+  color: #f7ad6f;
+  background: #fff;
+  padding: 20rpx 0;
+  z-index: 1000;
+}
+.index_l {
+  .width(100%);
+  position: absolute;
+  top: 420rpx;
+  left: 0;
+  z-index: 100;
+}
+.popup {
+  padding: 20rpx;
+}
+.cha {
+  width: 40rpx;
+}
+.flex {
+  .mix-flex-space();
+  .margin(0,0,20rpx,0);
+}
+.huodong {
+  .f_s(36rpx);
+}
+.index_po{
+  z-index: 100;
+}
+</style>

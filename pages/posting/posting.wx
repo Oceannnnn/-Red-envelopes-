@@ -1,0 +1,236 @@
+<template>
+  <view>
+    <textarea placeholder="分享内容..." class="textarea p_20" bindinput="bindinput"></textarea>
+    <ui-row-list>
+    <ui-row class="my_body" bindtap="change" data-type="1">
+        <ui-col span="4" vertical-align="middle" align="center">
+            <image src="{{image1}}" class="c_img" mode="widthFix" />
+        </ui-col>
+        <ui-col span="8" class="text" >
+            {{text1}}
+        </ui-col>
+    </ui-row>
+    <ui-row class="my_body" bindtap="change" data-type="2" wx:if="{{ischoose==1}}">
+        <ui-col span="4" vertical-align="middle" align="center">
+            <image src="{{image2}}" class="c_img" mode="widthFix" />
+        </ui-col>
+        <ui-col class="text" span="8">
+            {{text2}}
+        </ui-col>
+    </ui-row>
+</ui-row-list>
+  <ui-popup show="{{ show5 }}" height="270" background="transparent">
+      <view class="popup5 pr">
+        <view class="showText">{{showText}}</view>
+        <ui-icon type="x" size="18" color="#999" class="close" bindtap="handleShow5"></ui-icon>
+         <ui-row space-bottom="20">
+            <ui-col align="center" vertical-align="middle" wx:for="{{list}}" wx:key="" class="list" data-id="{{item.id}}" data-image="{{item.image}}" data-name="{{item.name}}" bindtap="{{item.num!=0?'changeImage':''}}">
+                <image src="{{item.image}}" mode="widthFix" />
+                <view class="text">{{item.name}}</view>
+                <ui-badge text="{{item.num}}" class="lucky" custom-style="{{customStyle}}" wx:if="{{item.num!=0&&type==1}}"></ui-badge>
+            </ui-col>
+        </ui-row>
+      </view>
+  </ui-popup>
+<button class="button-style-demo1" disabled="{{disabled}}" bindtap="publishLucky">立即发表</button>
+  </view>
+</template>
+
+<script>
+const app = getApp();
+import system from "../../static/utils/system";
+export default {
+  config: {
+    navigationBarTitleText: "发帖子"
+  },
+  data: {
+    content: "",
+    disabled: false,
+    show5: false,
+    showText: "我的福卡",
+    image1: "../../static/images/add.png",
+    image2: "../../static/images/add.png",
+    text1: "选择你的福卡",
+    text2: "选择你想换取的福卡",
+    customStyle: {
+      top: "-10rpx",
+      right: "0",
+      position: "absolute",
+      "background-color": "#FEDFC2",
+      color: "#ff1e00"
+    }
+  },
+  onLoad() {
+    let token = app.globalData.token;
+    system.http("Change/userLuckyShow", {}, "get", token).then(res => {
+      if (res.code == 200) {
+        this.setData({
+          userLuckyShow: res.data
+        });
+      } else if (res.code == -1) {
+        system.afreshLogin();
+      }
+    });
+  },
+  bindinput(e) {
+    this.setData({
+      content: e.detail.value
+    });
+  },
+  handleShow5() {
+    this.setData({
+      show5: !this.data.show5
+    });
+  },
+  change(e) {
+    this.handleShow5();
+    let type = e.currentTarget.dataset.type;
+    let list = [];
+    let showText = "";
+    if (type == 1) {
+      list = this.data.userLuckyShow;
+      showText = "我的福卡";
+    } else {
+      list = this.data.wantLuckyShow;
+      showText = "想要换取的福卡";
+    }
+    this.setData({
+      list: list,
+      type: type,
+      showText: showText
+    });
+  },
+  changeImage(e) {
+    this.handleShow5();
+    let image = e.currentTarget.dataset.image;
+    let name = e.currentTarget.dataset.name;
+    let id = e.currentTarget.dataset.id;
+    let type = this.data.type;
+    if (type == 1) {
+      this.setData({
+        ischoose: 1,
+        image1: image,
+        text1: name,
+        out_id: id,
+        image2: "../../static/images/add.png",
+        in_id: ""
+      });
+      let token = app.globalData.token;
+      system
+        .http("Change/wantLuckyShow", { id: id }, "post", token)
+        .then(res => {
+          if (res.code == 200) {
+            this.setData({
+              wantLuckyShow: res.data
+            });
+          } else if (res.code == -1) {
+            system.afreshLogin();
+          }
+        });
+    } else {
+      this.setData({
+        image2: image,
+        text2: name,
+        in_id: id
+      });
+    }
+  },
+  publishLucky(e) {
+    let out_id = this.data.out_id;
+    let in_id = this.data.in_id;
+    let content = this.data.content;
+    if (content == "") {
+      wx.showToast({
+        title: "内容不能为空",
+        icon: "none"
+      });
+      return;
+    }
+    if (out_id) {
+      if (!in_id || in_id == "") {
+        wx.showToast({
+          title: "请选择想要的福卡",
+          icon: "none"
+        });
+        return;
+      }
+    }
+    this.setData({
+      disabled: true
+    });
+    let token = app.globalData.token;
+    let json = {
+      content: content,
+      out_id: out_id,
+      in_id: in_id
+    };
+    system.http("Change/publishLucky", json, "post", token).then(res => {
+      if (res.code == 200) {
+        wx.showToast({
+          title: "发表成功",
+          icon: "success"
+        });
+        wx.navigateBack();
+      } else if (res.code == -1) {
+        system.afreshLogin();
+      }
+    });
+  }
+};
+</script>
+
+<style lang="less">
+page {
+  background: #fff;
+}
+.textarea {
+  .f_s(30rpx);
+  height: 200rpx;
+}
+.my_body {
+  .mix-flex-y-center();
+  .f_s(30rpx);
+  padding: 20rpx;
+}
+.c_img {
+  width: 160rpx;
+  .border-radius(10rpx);
+  .margin(0,40rpx);
+}
+.button-style-demo1 {
+  background-color: #c01920;
+  .border-radius(20rpx);
+  border-color: #c01920;
+  box-shadow: 3px 3px 8px #e57a7e;
+  color: #fff;
+  .width(80%);
+  margin: 100rpx auto 0;
+}
+.popup5 {
+  .width(95%);
+  background-color: #fff;
+  height: 540rpx;
+  margin: 0 auto;
+  .border-radius(5rpx);
+  padding: 20rpx;
+  .showText {
+    .f_s(38rpx);
+  }
+  .close {
+    position: absolute;
+    top: 20rpx;
+    right: 20rpx;
+  }
+  .list {
+    .margin(40rpx);
+    .mix-flex-center();
+    image {
+      .width(95%);
+    }
+    .text {
+      .f_s(28rpx);
+      .margin(10rpx);
+    }
+  }
+}
+</style>

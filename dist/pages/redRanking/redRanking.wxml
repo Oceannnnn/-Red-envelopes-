@@ -1,0 +1,54 @@
+<view>
+  <image src="../../static/images/r_h.png" class="index_h" mode="widthFix" />
+  <view class="r_body">
+    <view class="p_20 r_body_h bor_b ui-row" style="">
+      <view class="ui-col ui-col-align-center align-center valign-middle" style="">
+        <view class="ui-col-content align-center valign-middle">
+          <view class="c_text">排行</view>
+        </view>
+      </view>
+      <view class="ui-col ui-col-align-center align-center valign-middle" style="">
+        <view class="ui-col-content align-center valign-middle">
+          <view class="c_text">头像</view>
+        </view>
+      </view>
+      <view class="ui-col ui-col-align-center align-center valign-middle" style="">
+        <view class="ui-col-content align-center valign-middle">
+          <view class="c_text">昵称</view>
+        </view>
+      </view>
+      <view class="ui-col ui-col-align-center align-center valign-middle" style="">
+        <view class="ui-col-content align-center valign-middle">
+          <view class="c_text">金额</view>
+        </view>
+      </view>
+    </view>
+    <view class="r_bodycon">
+      <view wx:for="{{redRanking}}" wx:for-index="idx" wx:key="{{redRanking}}">
+        <view height="" space-bottom="" class="p_20 r_body_k bor_b {{item.show_type=='text'&&idx==1?'on':''}} ui-row" style="">
+          <view class="ui-col ui-col-align-center align-center valign-middle" style="">
+            <view class="ui-col-content align-center valign-middle">
+              <image src="{{item.num}}" class="r_h" mode="widthFix" wx:if="{{item.show_type=='image'}}" />
+              <view wx:else="" class="r_text">{{item.num}}</view>
+            </view>
+          </view>
+          <view class="ui-col ui-col-align-center align-center valign-middle" style="">
+            <view class="ui-col-content align-center valign-middle">
+              <image src="{{item.avatar}}" class="r_h_t r_h" mode="widthFix" />
+            </view>
+          </view>
+          <view class="ui-col ui-col-align-center align-center valign-middle" style="">
+            <view class="ui-col-content align-center valign-middle">
+              <view class="r_text">{{item.nick}}{{item.nick}}</view>
+            </view>
+          </view>
+          <view class="ui-col ui-col-align-center align-center valign-middle" style="">
+            <view class="ui-col-content align-center valign-middle">
+              <view class="r_text">{{item.TotalMoney}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

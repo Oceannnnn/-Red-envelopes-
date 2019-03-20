@@ -1,0 +1,119 @@
+<template>
+  <view>
+    <image src="../../static/images/r_h.png" class="index_h" mode="widthFix" />
+    <view class="r_body">
+      <ui-row class="p_20 r_body_h bor_b">
+        <ui-col align="center" vertical-align="middle">
+          <view class="c_text">排行</view>
+        </ui-col>
+        <ui-col align="center" vertical-align="middle">
+          <view class="c_text">头像</view>
+        </ui-col>
+        <ui-col align="center" vertical-align="middle">
+          <view class="c_text">昵称</view>
+        </ui-col>
+        <ui-col align="center" vertical-align="middle">
+          <view class="c_text">金额</view>
+        </ui-col>
+      </ui-row>
+      <view class="r_bodycon">
+        <view wx:for="{{redRanking}}" wx:for-index="idx" wx:key="{{redRanking}}">
+          <ui-row height="" space-bottom="" class="p_20 r_body_k bor_b {{item.show_type=='text'&&idx==1?'on':''}}">
+            <ui-col align="center" vertical-align="middle">
+              <image src="{{item.num}}" class="r_h" mode="widthFix" wx:if="{{item.show_type=='image'}}" />
+              <view wx:else class="r_text">{{item.num}}</view>
+            </ui-col>
+            <ui-col align="center" vertical-align="middle">
+              <image src="{{item.avatar}}" class="r_h_t r_h" mode="widthFix"/>
+            </ui-col>
+            <ui-col align="center" vertical-align="middle">
+              <view class="r_text">{{item.nick}}{{item.nick}}</view>
+            </ui-col>
+            <ui-col align="center" vertical-align="middle">
+              <view class="r_text">{{item.TotalMoney}}</view>
+            </ui-col>
+          </ui-row>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+const app = getApp();
+import system from "../../static/utils/system.js";
+export default {
+  config: {
+    navigationBarTitleText: "红包排行榜"
+  },
+  data: {},
+  onLoad(op) {
+    this.init();
+  },
+  init() {
+    let token = app.globalData.token;
+    system.http("My/redbagList", {}, "post", token).then(res => {
+      if (res.code == 200) {
+        this.setData({
+          redRanking: res.data
+        });
+      } else if (res.code == -1) {
+        system.afreshLogin();
+      }
+    });
+  }
+};
+</script>
+
+<style lang="less">
+.bor_b {
+  border-bottom: 1px solid #fff4bf;
+}
+.index_h {
+  .width(100%);
+}
+.r_body {
+  .width(90%);
+  border: 1px solid #fff4bf;
+  .border-radius(20rpx);
+  height: 980rpx;
+  background: #fff;
+  top: 150rpx;
+  left: 5%;
+  position: absolute;
+}
+.r_body_k.on {
+  background: #fff5c0;
+}
+.r_body_h {
+  color: #ff9c00;
+  .f_s(34rpx);
+  position: absolute;
+  top: 0;
+  left: 0;
+  .width(100%);
+  background: #fff;
+  z-index: 10;
+}
+.r_h {
+  width: 80rpx;
+  height: 80rpx;
+}
+.r_h_t {
+  .border-radius(50%);
+}
+.r_body_k {
+  .mix-flex-y-center();
+  .f_s(32rpx);
+}
+.r_text {
+  .mix-text-overflow();
+  .width(100%);
+  .f_s(30rpx);
+}
+.r_bodycon {
+  .margin(80rpx);
+  overflow: scroll;
+  height: 900rpx;
+}
+</style>

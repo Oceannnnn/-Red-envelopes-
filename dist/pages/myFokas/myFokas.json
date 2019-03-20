@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "ui-badge": "../../packages/touchui-wx-components/ui-badge/dist/index",
+    "ui-popup": "../../packages/touchui-wx-components/ui-popup/dist/index"
+  },
+  "navigationBarTitleText": "我的福卡"
+}

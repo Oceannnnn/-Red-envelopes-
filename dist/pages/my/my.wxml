@@ -1,0 +1,101 @@
+<view>
+  <image src="../../static/images/m_h.png" class="index_h" />
+  <view class="p_20 pr c_f">
+    <view wx:if="{{state!=1}}" class="mb_20">
+      <button open-type="getUserInfo" bindgetuserinfo="getUserInfo" class="po"> </button>
+      <view class="my_header">
+        <image class="avatar" src="../../static/images/wu.png" />
+        <view>未登录
+          <text class="f_28">(请点击登录)</text>
+        </view>
+      </view>
+    </view>
+    <view wx:else="" class="my_header">
+      <image class="avatar" src="{{userInfo.avatarUrl}}" />
+      <view>用户名：{{userInfo.nickName}}</view>
+    </view>
+  </view>
+  <view height="" class="p_20 my_body ui-row" style="margin-bottom: 10px;">
+    <view class="ui-col ui-col-border-right ui-col-align-center align-center" style="">
+      <view class="ui-col-content align-center">
+        <image src="../../static/images/m_y.png" class="c_img" mode="widthFix" />
+        <view class="c_text">余额：{{balance}}</view>
+      </view>
+    </view>
+    <view class="ui-col ui-col-align-center align-center" style="">
+      <view class="ui-col-content align-center">
+        <view class="po" wx:if="{{state==1}}" bindtap="handleShow5"></view>
+        <button open-type="getUserInfo" bindgetuserinfo="getUserInfo" class="po" wx:else=""> </button>
+        <image src="../../static/images/m_t.png" class="c_img" mode="widthFix" />
+        <view class="c_text">提现</view>
+      </view>
+    </view>
+  </view>
+  <view class="my_footer ui-row-list" style="">
+    <view class="p_20 my_body flex_i ui-row" style="">
+      <button open-type="getUserInfo" bindgetuserinfo="getUserInfo" class="po" wx:if="{{state==0}}"> </button>
+      <navigator url="../withdrawal/withdrawal" class="po" wx:else=""> </navigator>
+      <view class="ui-col ui-col-2 ui-col-align-center align-center valign-middle" style="flex: 0 0 16.666666666666664%;">
+        <view class="ui-col-content align-center valign-middle">
+          <image src="../../static/images/withdrawal.png" class="my_footer_img p_20" mode="widthFix" />
+        </view>
+      </view>
+      <view class="text ui-col ui-col-10" style="flex: 0 0 83.33333333333334%;">
+        <view class="ui-col-content">
+          提现明细
+        </view>
+      </view>
+    </view>
+    <view class="p_20 my_body flex_i ui-row" bindtap="toCall" style="">
+      <view class="ui-col ui-col-2 ui-col-align-center align-center valign-middle" style="flex: 0 0 16.666666666666664%;">
+        <view class="ui-col-content align-center valign-middle">
+          <image src="../../static/images/call.png" class="my_footer_img p_20" mode="widthFix" />
+        </view>
+      </view>
+      <view class="text ui-col ui-col-10" style="flex: 0 0 83.33333333333334%;">
+        <view class="ui-col-content">
+          联系我们
+        </view>
+      </view>
+    </view>
+    <view class="p_20 my_body flex_i pr ui-row" style="">
+      <button open-type="getUserInfo" bindgetuserinfo="getUserInfo" class="po" wx:if="{{state==0}}"> </button>
+      <button open-type="share" class="po" wx:else=""> </button>
+      <view class="ui-col ui-col-2 ui-col-align-center align-center valign-middle" style="flex: 0 0 16.666666666666664%;">
+        <view class="ui-col-content align-center valign-middle">
+          <image src="../../static/images/share.png" class="my_footer_img p_20" mode="widthFix" />
+        </view>
+      </view>
+      <view class="text ui-col ui-col-10" style="flex: 0 0 83.33333333333334%;">
+        <view class="ui-col-content">
+          分享给朋友
+        </view>
+      </view>
+    </view>
+  </view>
+  <ui-popup show="{{ show5 }}" height="270" background="transparent" _pid="{{_pid}}">
+    <view class="popup5">
+      <view class="ui-row ui-row-border-bottom" style="height:40px;">
+        <view class="ui-col valign-middle" style="padding-left: 20px;">
+          <view class="ui-col-content valign-middle">
+            提现（到账微信零钱）
+          </view>
+        </view>
+        <view bindtap="handleShow5" class="ui-col ui-col-align-center align-center valign-middle" style="flex:0 0 40px;">
+          <view class="ui-col-content align-center valign-middle">
+            <span type="x" size="18" color="#999" class="ui-icon icon-x" style="color: #999;font-size: 18px;"></span>
+          </view>
+        </view>
+      </view>
+      <view class="title">提现金额</view>
+      <view class="with_j">
+        ￥<input type="text" placeholder="输入金额" class="with_money" bindinput="bindinput"></input>
+      </view>
+      <view class="with_b c_999 flex_i">
+        零钱余额￥{{balance}}
+        <view class="all_money" data-money="{{balance}}" bindtap="tixianApply">全部提现</view>
+      </view>
+      <button class="button-style-demo1" bindtap="tixianApply" data-money="{{with_money}}">立即提现</button>
+    </view>
+  </ui-popup>
+</view>

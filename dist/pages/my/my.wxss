@@ -1,0 +1,132 @@
+/* 1像素解决方案 */
+/*
+ * 清除1px
+ */
+/*
+ * 清除浮动
+ */
+/*
+ * mobile
+ */
+/*
+ * 1px
+ */
+/*
+ * text
+ */
+/* 垂直居中 */
+/* 水平居中 */
+/* 水平垂直居中 */
+/* 超出部分出省略号 */
+/* 多行文本超出部分省略号 */
+page {
+  background: #f8f8f8;
+}
+.p_20 {
+  padding: 20rpx;
+}
+.pr {
+  position: relative;
+}
+.po {
+  position: absolute;
+  width: 100%;
+  height: 86%;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  background: none;
+  border: none;
+  z-index: 11;
+}
+.c_f {
+  color: #fff;
+}
+.c_999 {
+  color: #999;
+}
+.flex_i {
+  display: flex;
+  align-items: center;
+}
+.my_header {
+  display: flex;
+  align-items: center;
+  z-index: 10;
+  font-size: 32rpx;
+}
+.f_28 {
+  font-size: 28rpx;
+}
+.index_h {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 200rpx;
+}
+.avatar {
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 20rpx 0 0;
+}
+.my_body {
+  background: #fff;
+  font-size: 30rpx;
+}
+.c_img {
+  width: 60rpx;
+}
+.my_footer_img {
+  width: 50rpx;
+  margin: 0 10rpx 0 0;
+}
+.my_footer {
+  width: 94%;
+  border-radius: 20rpx;
+  margin: 0 0 0 3%;
+  overflow: hidden;
+}
+.popup5 {
+  width: 95%;
+  background-color: #fff;
+  height: 540rpx;
+  margin: 0 auto;
+  border-radius: 5rpx;
+  overflow: hidden;
+}
+.popup5 .title {
+  padding: 10px 20px;
+  font-size: 28rpx;
+}
+.popup5 .with_j {
+  width: 85%;
+  margin: 0 auto;
+  font-size: 40rpx;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding: 20rpx 0 20rpx 0;
+}
+.popup5 .with_j .with_money {
+  margin: 0 20rpx 0 0;
+}
+.popup5 .with_b {
+  width: 85%;
+  margin: 30rpx auto;
+  font-size: 30rpx;
+}
+.popup5 .with_b .all_money {
+  color: #1589f8;
+  margin: 0 0 0 20rpx;
+}
+.popup5 .button-style-demo1 {
+  width: 70%;
+  margin: 60rpx auto 0;
+  background-color: #fe0000;
+  border-radius: 10rpx;
+  box-shadow: 3px 3px 8px #e57a7e;
+  color: #fff;
+}
